@@ -29,24 +29,24 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
-# dockers:
-# - image_templates:
-#     - "prune/{{.ProjectName}}:latest"
-#     - "prune/{{.ProjectName}}:{{ .Tag }}"
-#     - "prune/{{.ProjectName}}:v{{ .Major }}"
-#     - "prune/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
-#   dockerfile: Dockerfile
-#   extra_files:
-#     - main.go
-#     - go.mod
-#     - go.sum
-#   use_buildx: true
-#   build_flag_templates:
-#   - --label=org.opencontainers.image.title={{ .ProjectName }}
-#   - --label=org.opencontainers.image.description={{ .ProjectName }}
-#   - --label=org.opencontainers.image.url=https://github.com/prune998/gojsontoenv
-#   - --label=org.opencontainers.image.source=https://github.com/prune998/gojsontoenv
-#   - --label=org.opencontainers.image.version={{ .Version }}
-#   - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
-#   - --label=org.opencontainers.image.revision={{ .FullCommit }}
-#   - --label=org.opencontainers.image.licenses=MIT
+dockers:
+- image_templates:
+    - "prune/{{.ProjectName}}:latest"
+    - "prune/{{.ProjectName}}:{{ .Tag }}"
+    - "prune/{{.ProjectName}}:v{{ .Major }}"
+    - "prune/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
+  dockerfile: Dockerfile
+  extra_files:
+    - main.go
+    - go.mod
+    - go.sum
+  use_buildx: true
+  build_flag_templates:
+  - --label=org.opencontainers.image.title={{ .ProjectName }}
+  - --label=org.opencontainers.image.description={{ .ProjectName }}
+  - --label=org.opencontainers.image.url=https://github.com/prune998/gojsontoenv
+  - --label=org.opencontainers.image.source=https://github.com/prune998/gojsontoenv
+  - --label=org.opencontainers.image.version={{ .Version }}
+  - --label=org.opencontainers.image.created={{ time "2006-01-02T15:04:05Z07:00" }}
+  - --label=org.opencontainers.image.revision={{ .FullCommit }}
+  - --label=org.opencontainers.image.licenses=MIT
