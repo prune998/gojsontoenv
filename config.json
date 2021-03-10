@@ -1,0 +1,7 @@
+{
+  "MY_ENV_1": "foo",
+  "MY_ENV_2": "bar",
+  "MY_INT": 42,
+  "MY_FLOAT": 12.34,
+  "MY_BOOL": true
+}
