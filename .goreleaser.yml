@@ -37,6 +37,10 @@ dockers:
     - "prune/{{.ProjectName}}:{{ .Tag }}-amd64"
     - "prune/{{.ProjectName}}:v{{ .Major }}-amd64"
     - "prune/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}-amd64"
+    - "prune/{{.ProjectName}}:latest"
+    - "prune/{{.ProjectName}}:{{ .Tag }}"
+    - "prune/{{.ProjectName}}:v{{ .Major }}"
+    - "prune/{{.ProjectName}}:v{{ .Major }}.{{ .Minor }}"
   dockerfile: Dockerfile
   extra_files:
     - main.go
