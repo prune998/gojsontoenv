@@ -20,13 +20,23 @@ export MY_ENV_2="bar"
 export MY_INT="42"
 export MY_FLOAT="12.34"
 export MY_BOOL="true"
+
+./gojsontoenv --output vars
+
+MY_ENV_1="foo"
+MY_ENV_2="bar"
+MY_INT="42"
+MY_FLOAT="12.34"
+MY_BOOL="true"
 ```
 
 ## Using with Terraform
 
-This tool can be used with Terraform `output` variables. To do so, define some output variables in your TF scripts:
+This tool can be used with Terraform `output` variables.
 
-```json
+To do so, define some output variables in your TF scripts:
+
+```hcl
 output "k8s_core_vars" {
   value = {
     "CLUSTER_NAME"                = local.cluster_name,
@@ -42,6 +52,7 @@ After your TF script is applied, you can use the TF `output` command to dump tho
 
 ```shell
 terraform output -json k8s_core_vars | jq '.'
+
 {
   "ALB_INGRESS_ROLE_ARN": "arn:aws:iam::123456789:role/my-alb-ingress-role",
   "AWS_CLOUDWATCH_ROLE_ARN": "arn:aws:iam::123456789:role/my-amazon-cloudwatch",
@@ -75,11 +86,11 @@ eval $(./gojsontoenv -input  k8s_core_vars.json)
 ```
 
 Note that the content of the file may be displayed in your shell if you set something like `set -x`.
+
 If you don't want the content to be displayed in your CI logs, source the file instead:
 
 ```shell
-./gojsontoenv -input  k8s_core_vars.json > k8s_core_vars.sh
-source k8s_core_vars.sh
+./gojsontoenv -input  k8s_core_vars.json > k8s_core_vars.sh && source k8s_core_vars.sh
 ```
 
 ### Docker
