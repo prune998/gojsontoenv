@@ -9,53 +9,73 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Configuration map[string]string
+type JsonConfig map[string]string
+
+var (
+	version        = "no version set"
+	commit         = "no commit"
+	date           = "no date"
+	displayVersion bool
+	inputFileName  string
+	outputFormat   string
+)
 
 func main() {
-	var (
-		configFile   string
-		outputFormat string
-	)
-
-	flag.StringVar(&configFile, "input", "./config.json", "path to the config file")
+	flag.StringVar(&inputFileName, "input", "", "path to the input JSON file, read from stdin if none provided")
 	flag.StringVar(&outputFormat, "output", "export", "output format, one of 'export' (default) or 'vars'")
+	flag.BoolVar(&displayVersion, "version", false, "Show version and quit")
 	flag.Parse()
 
-	configuration := Configuration{}
+	if displayVersion {
+		fmt.Printf("%s (%s), build on %s\n\n", version, commit, date)
 
-	file, err := os.Open(configFile)
+		flag.Usage()
+		os.Exit(0)
+	}
+
+	jsonConfig := JsonConfig{}
+	inputReader := os.Stdin
+
+	if len(inputFileName) > 0 {
+		var err error
+		inputReader, err = os.Open(inputFileName)
+		if err != nil {
+			fmt.Println(err)
+
+			return
+		}
+		defer inputReader.Close()
+	}
+
+	data, err := ioutil.ReadAll(inputReader)
 	if err != nil {
 		fmt.Println(err)
+
 		return
 	}
-	defer file.Close()
-	data, err := ioutil.ReadAll(file)
+	err = yaml.Unmarshal(data, &jsonConfig)
 	if err != nil {
 		fmt.Println(err)
-		return
-	}
-	err = yaml.Unmarshal(data, &configuration)
-	if err != nil {
-		fmt.Println(err)
+
 		return
 	}
 
 	switch outputFormat {
 	case "export":
-		printExport(configuration)
+		printExport(jsonConfig)
 	case "vars":
-		printVars(configuration)
+		printVars(jsonConfig)
 	}
 }
 
-func printExport(configuration Configuration) {
-	for envKey, envVal := range configuration {
+func printExport(jsonConfig JsonConfig) {
+	for envKey, envVal := range jsonConfig {
 		fmt.Printf("export %s=\"%s\"\n", envKey, envVal)
 	}
 }
 
-func printVars(configuration Configuration) {
-	for envKey, envVal := range configuration {
+func printVars(jsonConfig JsonConfig) {
+	for envKey, envVal := range jsonConfig {
 		fmt.Printf("%s=\"%s\"\n", envKey, envVal)
 	}
 }

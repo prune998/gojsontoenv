@@ -1,27 +1,55 @@
 # gojsontoenv
 Take a Json file and output compatible Shell Env variables
 
+## Install
+
+Grad the version you need from the [Github Release page](https://github.com/prune998/gojsontoenv/releases)
+
+ex:
+
+```shell
+export GOJSONTOENV_VERSION=1.0.0
+export OS=Linux
+export ARCH=x86_64
+curl --location --output /tmp/gojsontoenv.tar.gz \
+	"https://github.com/prune998/gojsontoenv/releases/download/v${GOJSONTOENV_VERSION}/gojsontoenv_${GOJSONTOENV_VERSION}_${OS}_${ARCH}.tar.gz" \
+	&& tar -xzf /tmp/gojsontoenv.tar.gz -C /usr/local/bin gojsontoenv \
+	&& chmod +x /usr/local/bin/gojsontoenv \
+	&& rm /tmp/gojsontoenv.tar.gz
+```
+
 ## Usage
 
 ```shell
 ./gojsontoenv -h
-Usage of ./gojsontoenv:
-  -input="./config.json": path to the config file
-  -output="export": output format, one of 'export' (default) or 'vars'
-```
 
-Just run the `gojsontoenv` binary to translate a json file to a usable shell file:
+Usage of ./gojsontoenv:
+  -input="": path to the input JSON file, read from stdin if none provided
+  -output="export": output format, one of 'export' (default) or 'vars'
+  -version=false: Show version and quit
+```
+By default, `gojsontoenv` will read `<stdin>` so you can just pipe your json file into it:
 
 ```shell
-./gojsontoenv
+cat config.json | ./gojsontoenv
 
 export MY_ENV_1="foo"
 export MY_ENV_2="bar"
 export MY_INT="42"
 export MY_FLOAT="12.34"
 export MY_BOOL="true"
+```
 
-./gojsontoenv --output vars
+Or use the `--input` argument to read a file:
+
+```shell
+./gojsontoenv --input config.json
+```
+
+The `--output` is used to change the output format:
+
+```shell
+./gojsontoenv --input config.json --output vars
 
 MY_ENV_1="foo"
 MY_ENV_2="bar"
@@ -30,7 +58,7 @@ MY_FLOAT="12.34"
 MY_BOOL="true"
 ```
 
-## Using with Terraform
+### Using with Terraform
 
 This tool can be used with Terraform `output` variables.
 
@@ -69,7 +97,7 @@ terraform output -json k8s_core_vars > k8s_core_vars.json
 You can the use this app to transform this JSON file into a file usable in a shell:
 
 ```shell
-./gojsontoenv -input  k8s_core_vars.json
+./gojsontoenv --input  k8s_core_vars.json
 
 export ALB_INGRESS_ROLE_ARN="arn:aws:iam::123456789:role/my-alb-ingress-role"
 export AWS_CLOUDWATCH_ROLE_ARN="arn:aws:iam::123456789:role/my-amazon-cloudwatch"
@@ -82,7 +110,7 @@ export EXTERNAL_DNS_ROLE_ARN="arn:aws:iam::123456789:role/my-external-dns"
 To set those variables inside your current shell (for a CI/CD):
 
 ```shell
-eval $(./gojsontoenv -input  k8s_core_vars.json)
+eval $(./gojsontoenv --input  k8s_core_vars.json)
 ```
 
 Note that the content of the file may be displayed in your shell if you set something like `set -x`.
@@ -90,7 +118,7 @@ Note that the content of the file may be displayed in your shell if you set some
 If you don't want the content to be displayed in your CI logs, source the file instead:
 
 ```shell
-./gojsontoenv -input  k8s_core_vars.json > k8s_core_vars.sh && source k8s_core_vars.sh
+./gojsontoenv --input k8s_core_vars.json > k8s_core_vars.sh && source k8s_core_vars.sh
 ```
 
 ### Docker
